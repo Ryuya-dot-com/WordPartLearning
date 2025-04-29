@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英語接辞学習プラットフォーム | English Affix Learning Platform</title>
+    <style>
+        :root {
+            --primary-color: #4a6da7;
+            --secondary-color: #8aa9d6;
+            --accent-color: #f9a826;
+            --light-color: #f5f7fa;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --level1-color: #c8e6c9;
+            --level2-color: #ffecb3;
+            --level3-color: #ffccbc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Meiryo', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: var(--light-color);
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 1.5rem 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            margin: 1rem 0;
+            color: var(--primary-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .tab-container {
+            margin-bottom: 1rem;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
+        .tab {
+            padding: 0.7rem 1.5rem;
+            cursor: pointer;
+            background-color: #e0e0e0;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            margin-right: 0.3rem;
+            transition: background-color 0.3s;
+        }
+
+        .tab.active {
+            background-color: var(--secondary-color);
+            color: white;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: #f0f4f8;
+            border-radius: 5px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 150px;
+        }
+
+        .control-group label {
+            margin-bottom: 0.3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        select, input, button {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-family: inherit;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            background-color: white;
+        }
+
+        th, td {
+            padding: 0.7rem;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--secondary-color);
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .level-1 {
+            background-color: var(--level1-color);
+        }
+
+        .level-2 {
+            background-color: var(--level2-color);
+        }
+
+        .level-3 {
+            background-color: var(--level3-color);
+        }
+
+        .flashcard {
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            margin: 2rem auto;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        .flashcard-front {
+            background-color: white;
+        }
+
+        .flashcard-back {
+            background-color: var(--primary-color);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-affix {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .flashcard-level {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 0.3rem 0.6rem;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .flashcard-example {
+            margin: 0.5rem 0;
+            font-size: 1.2rem;
+        }
+
+        .flashcard-meaning {
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+
+        .flashcard-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .quiz-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .quiz-question {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .quiz-option {
+            padding: 0.8rem;
+            background-color: #f0f4f8;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .quiz-option:hover {
+            background-color: #e0e7f1;
+        }
+
+        .quiz-option.selected {
+            background-color: var(--secondary-color);
+            color: white;
+            font-weight: bold;
+        }
+
+        .quiz-option.correct {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .quiz-option.incorrect {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-box {
+            flex: 1;
+            min-width: 150px;
+            background-color: white;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            color: var(--dark-color);
+        }
+
+        @media (min-width: 768px) {
+            .quiz-options {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        .mastered-icon {
+            color: var(--success-color);
+            margin-left: 0.5rem;
+        }
+
+        .learning-progress {
+            width: 100%;
+            height: 5px;
+            background-color: #eee;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .learning-bar {
+            height: 100%;
+            background-color: var(--success-color);
+            width: 0%;
+        }
+
+        #progress-tab .affix-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .affix-card {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .jp-instructions {
+            background-color: #e0e7f1;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            border-left: 5px solid var(--primary-color);
+        }
+        
+        .hiragana {
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>英語接辞学習プラットフォーム</h1>
+        <p>English Affix Learning Platform for Japanese Speakers</p>
+    </header>
+    
+    <div class="container">
+        <div class="jp-instructions">
+            <p>このプラットフォームは、英語の接辞（接頭辞・接尾辞）を効率的に学習するためのツールです。</p>
+            <p class="hiragana">このプラットフォームは、えいごのせつじ（せっとうじ・せつびじ）をこうりつてきにがくしゅうするためのツールです。</p>
+            <ul>
+                <li>「学習」タブ：すべての接辞のリストと詳細を確認できます</li>
+                <li>「フラッシュカード」タブ：フラッシュカードで記憶練習ができます</li>
+                <li>「クイズ」タブ：テストで理解度を確認できます</li>
+                <li>「進捗」タブ：学習の進み具合を確認できます</li>
+            </ul>
+        </div>
+        
+        <div class="tab-container">
+            <div class="tabs">
+                <div class="tab active" data-tab="study">学習 <span class="hiragana">がくしゅう</span></div>
+                <div class="tab" data-tab="flashcard">フラッシュカード</div>
+                <div class="tab" data-tab="quiz">クイズ</div>
+                <div class="tab" data-tab="progress">進捗 <span class="hiragana">しんちょく</span></div>
+            </div>
+            
+            <div id="study-tab" class="tab-content active">
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="affix-type">接辞タイプ：</label>
+                        <select id="affix-type">
+                            <option value="all">すべて</option>
+                            <option value="prefix">接頭辞</option>
+                            <option value="suffix">接尾辞</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="difficulty-level">難易度：</label>
+                        <select id="difficulty-level">
+                            <option value="all">すべて</option>
+                            <option value="1">レベル 1（簡単）</option>
+                            <option value="2">レベル 2（普通）</option>
+                            <option value="3">レベル 3（難しい）</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="search-input">検索：</label>
+                        <input type="text" id="search-input" class="search-box" placeholder="接辞、意味、例を検索...">
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table id="affix-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>接辞</th>
+                                <th>難易度</th>
+                                <th>例 1</th>
+                                <th>例 2</th>
+                                <th>意味</th>
+                                <th>文法機能</th>
+                                <th>習得状況</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- JavaScript will populate this -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="flashcard-tab" class="tab-content">
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="flashcard-type">接辞タイプ：</label>
+                        <select id="flashcard-type">
+                            <option value="all">すべて</option>
+                            <option value="prefix">接頭辞</option>
+                            <option value="suffix">接尾辞</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="flashcard-level">難易度：</label>
+                        <select id="flashcard-level">
+                            <option value="all">すべて</option>
+                            <option value="1">レベル 1（簡単）</option>
+                            <option value="2">レベル 2（普通）</option>
+                            <option value="3">レベル 3（難しい）</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="flashcard-mastered">習得状況：</label>
+                        <select id="flashcard-mastered">
+                            <option value="all">すべて</option>
+                            <option value="false">未習得</option>
+                            <option value="true">習得済み</option>
+                        </select>
+                    </div>
+                    
+                    <button id="reset-flashcards" class="btn-danger">リセット</button>
+                </div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="flashcard-level">Level 1</div>
+                            <div class="flashcard-affix">re-</div>
+                            <p>カードをクリックして意味を確認</p>
+                            <p class="hiragana">カードをクリックしていみをかくにん</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <div class="flashcard-level">Level 1</div>
+                            <div class="flashcard-affix">re-</div>
+                            <div class="flashcard-example">例: replay, rebuild</div>
+                            <div class="flashcard-meaning">意味: again (もう一度)</div>
+                            <div class="flashcard-grammar">文法機能: -</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flashcard-nav">
+                    <button id="prev-card">前へ</button>
+                    <button id="mark-known" class="btn-success">習得済みにする</button>
+                    <button id="next-card">次へ</button>
+                </div>
+            </div>
+            
+            <div id="quiz-tab" class="tab-content">
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="quiz-type">クイズタイプ：</label>
+                        <select id="quiz-type">
+                            <option value="meaning">接辞→意味</option>
+                            <option value="affix">意味→接辞</option>
+                            <option value="example">例→接辞</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="quiz-affix-type">接辞タイプ：</label>
+                        <select id="quiz-affix-type">
+                            <option value="all">すべて</option>
+                            <option value="prefix">接頭辞</option>
+                            <option value="suffix">接尾辞</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="quiz-level">難易度：</label>
+                        <select id="quiz-level">
+                            <option value="all">すべて</option>
+                            <option value="1">レベル 1（簡単）</option>
+                            <option value="2">レベル 2（普通）</option>
+                            <option value="3">レベル 3（難しい）</option>
+                        </select>
+                    </div>
+                    
+                    <button id="start-quiz">クイズ開始</button>
+                </div>
+                
+                <div class="quiz-container">
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: 0%"></div>
+                    </div>
+                    
+                    <div class="stats">
+                        <div class="stat-box">
+                            <div class="stat-value" id="quiz-correct">0</div>
+                            <div class="stat-label">正解 <span class="hiragana">せいかい</span></div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="quiz-incorrect">0</div>
+                            <div class="stat-label">不正解 <span class="hiragana">ふせいかい</span></div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="quiz-remaining">10</div>
+                            <div class="stat-label">残り <span class="hiragana">のこり</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="quiz-question">
+                        <h3 id="quiz-prompt">接辞「un-」の意味は？</h3>
+                        <div class="quiz-options" id="quiz-options">
+                            <div class="quiz-option">not（〜ではない）</div>
+                            <div class="quiz-option">again（もう一度）</div>
+                            <div class="quiz-option">before（〜の前に）</div>
+                            <div class="quiz-option">after（〜の後に）</div>
+                        </div>
+                    </div>
+                    
+                    <button id="next-question" disabled>次の質問</button>
+                </div>
+            </div>
+            
+            <div id="progress-tab" class="tab-content">
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="stat-value" id="total-mastered">0</div>
+                        <div class="stat-label">習得済み合計</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="prefix-mastered">0/42</div>
+                        <div class="stat-label">接頭辞習得</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="suffix-mastered">0/76</div>
+                        <div class="stat-label">接尾辞習得</div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="progress-level">難易度でフィルタ：</label>
+                        <select id="progress-level">
+                            <option value="all">すべて</option>
+                            <option value="1">レベル 1（簡単）</option>
+                            <option value="2">レベル 2（普通）</option>
+                            <option value="3">レベル 3（難しい）</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="progress-type">接辞タイプ：</label>
+                        <select id="progress-type">
+                            <option value="all">すべて</option>
+                            <option value="prefix">接頭辞</option>
+                            <option value="suffix">接尾辞</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="progress-mastered">習得状況：</label>
+                        <select id="progress-mastered">
+                            <option value="all">すべて</option>
+                            <option value="false">未習得</option>
+                            <option value="true">習得済み</option>
+                        </select>
+                    </div>
+                    
+                    <button id="reset-progress" class="btn-danger">進捗をリセット</button>
+                </div>
+                
+                <h2>接辞習得状況</h2>
+                <div id="affix-progress" class="affix-list">
+                    <!-- JavaScript will populate this -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>© 2025 英語接辞学習プラットフォーム | English Affix Learning Platform</p>
+    </div>
+
+    <script>
+        // Affix data 
+        const affixData = [
+          { no: 1, affix: "a-", level: 3, example1: "atypical", example2: "asexual", meaning: "not", grammaticalFunction: "", type: "prefix" },
+          { no: 2, affix: "a-", level: 3, example1: "ahead", example2: "aside", meaning: "toward", grammaticalFunction: "adverb", type: "prefix" },
+          { no: 3, affix: "ab-", level: 2, example1: "abuse", example2: "abnormal", meaning: "away from", grammaticalFunction: "", type: "prefix" },
+          { no: 4, affix: "anti-", level: 1, example1: "anti-social", example2: "anti-government", meaning: "against", grammaticalFunction: "", type: "prefix" },
+          { no: 5, affix: "arch-", level: 3, example1: "archbishop", example2: "arch-rival", meaning: "main", grammaticalFunction: "", type: "prefix" },
+          { no: 6, affix: "auto-", level: 1, example1: "autobiography", example2: "autopilot", meaning: "self", grammaticalFunction: "", type: "prefix" },
+          { no: 7, affix: "be-", level: 3, example1: "belittle", example2: "befriend", meaning: "verb", grammaticalFunction: "verb", type: "prefix" },
+          { no: 8, affix: "bi-", level: 2, example1: "biplane", example2: "bisexual", meaning: "two", grammaticalFunction: "", type: "prefix" },
+          { no: 9, affix: "circum-", level: 2, example1: "circumpolar", example2: "circumnavigate", meaning: "around", grammaticalFunction: "", type: "prefix" },
+          { no: 10, affix: "co-", level: 1, example1: "co-worker", example2: "co-exist", meaning: "together", grammaticalFunction: "", type: "prefix" },
+          { no: 11, affix: "counter-", level: 3, example1: "counteract", example2: "counter-productive", meaning: "opposite", grammaticalFunction: "", type: "prefix" },
+          { no: 12, affix: "de-", level: 2, example1: "decompose", example2: "decode", meaning: "opposite", grammaticalFunction: "", type: "prefix" },
+          { no: 13, affix: "dis-", level: 1, example1: "disappear", example2: "disorder", meaning: "not", grammaticalFunction: "", type: "prefix" },
+          { no: 14, affix: "em-", level: 2, example1: "empower", example2: "embody", meaning: "verb", grammaticalFunction: "verb", type: "prefix" },
+          { no: 15, affix: "en-", level: 2, example1: "ensure", example2: "enable", meaning: "verb", grammaticalFunction: "verb", type: "prefix" },
+          { no: 16, affix: "ex-", level: 2, example1: "ex-wife", example2: "ex-member", meaning: "earlier", grammaticalFunction: "", type: "prefix" },
+          { no: 17, affix: "fore-", level: 1, example1: "forewarn", example2: "foresee", meaning: "in advance", grammaticalFunction: "", type: "prefix" },
+          { no: 18, affix: "hyper-", level: 1, example1: "hypertension", example2: "hyperactive", meaning: "too much", grammaticalFunction: "", type: "prefix" },
+          { no: 19, affix: "il-", level: 2, example1: "illegal", example2: "illogical", meaning: "not", grammaticalFunction: "", type: "prefix" },
+          { no: 20, affix: "im-", level: 1, example1: "impossible", example2: "impersonal", meaning: "not", grammaticalFunction: "", type: "prefix" },
+          { no: 21, affix: "in-", level: 3, example1: "independent", example2: "informal", meaning: "not", grammaticalFunction: "", type: "prefix" },
+          { no: 22, affix: "inter-", level: 1, example1: "international", example2: "interface", meaning: "between", grammaticalFunction: "", type: "prefix" },
+          { no: 23, affix: "ir-", level: 1, example1: "irregular", example2: "irrelevant", meaning: "not", grammaticalFunction: "", type: "prefix" },
+          { no: 24, affix: "mal-", level: 3, example1: "malfunction", example2: "malnutrition", meaning: "bad", grammaticalFunction: "", type: "prefix" },
+          { no: 25, affix: "micro-", level: 1, example1: "microcomputer", example2: "microfilm", meaning: "small", grammaticalFunction: "", type: "prefix" },
+          { no: 26, affix: "mid-", level: 1, example1: "midnight", example2: "midsummer", meaning: "halfway", grammaticalFunction: "", type: "prefix" },
+          { no: 27, affix: "mis-", level: 1, example1: "misuse", example2: "mislead", meaning: "wrongly", grammaticalFunction: "", type: "prefix" },
+          { no: 28, affix: "mono-", level: 1, example1: "monotone", example2: "monoculture", meaning: "one", grammaticalFunction: "", type: "prefix" },
+          { no: 29, affix: "multi-", level: 1, example1: "multinational", example2: "multicultural", meaning: "many", grammaticalFunction: "", type: "prefix" },
+          { no: 30, affix: "neo-", level: 3, example1: "neo-classical", example2: "neo-Gothic", meaning: "new", grammaticalFunction: "", type: "prefix" },
+          { no: 31, affix: "non-", level: 1, example1: "non-existent", example2: "non-stop", meaning: "not", grammaticalFunction: "", type: "prefix" },
+          { no: 32, affix: "post-", level: 1, example1: "post-war", example2: "postmodern", meaning: "after", grammaticalFunction: "", type: "prefix" },
+          { no: 33, affix: "pre-", level: 1, example1: "pre-war", example2: "pre-school", meaning: "before", grammaticalFunction: "", type: "prefix" },
+          { no: 34, affix: "pro-", level: 2, example1: "pro-democracy", example2: "pro-life", meaning: "supporting", grammaticalFunction: "", type: "prefix" },
+          { no: 35, affix: "re-", level: 1, example1: "replay", example2: "rebuild", meaning: "again", grammaticalFunction: "", type: "prefix" },
+          { no: 36, affix: "semi-", level: 1, example1: "semi-final", example2: "semi-skilled", meaning: "half", grammaticalFunction: "", type: "prefix" },
+          { no: 37, affix: "sub-", level: 1, example1: "sub-committee", example2: "subgroup", meaning: "under", grammaticalFunction: "", type: "prefix" },
+          { no: 38, affix: "super-", level: 2, example1: "supernatural", example2: "superhuman", meaning: "beyond", grammaticalFunction: "", type: "prefix" },
+          { no: 39, affix: "sur-", level: 3, example1: "surpass", example2: "surreal", meaning: "over", grammaticalFunction: "", type: "prefix" },
+          { no: 40, affix: "trans-", level: 1, example1: "transform", example2: "transplant", meaning: "change", grammaticalFunction: "", type: "prefix" },
+          { no: 41, affix: "un-", level: 1, example1: "unable", example2: "unlikely", meaning: "not", grammaticalFunction: "", type: "prefix" },
+          { no: 42, affix: "uni-", level: 2, example1: "unisex", example2: "unicycle", meaning: "one", grammaticalFunction: "", type: "prefix" },
+          { no: 43, affix: "-able", level: 1, example1: "acceptable", example2: "predictable", meaning: "can be", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 44, affix: "-age", level: 3, example1: "shortage", example2: "coverage", meaning: "", grammaticalFunction: "noun", type: "suffix" },
+          { no: 45, affix: "-al", level: 2, example1: "personal", example2: "traditional", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 46, affix: "-al", level: 2, example1: "proposal", example2: "approval", meaning: "", grammaticalFunction: "noun", type: "suffix" },
+          { no: 47, affix: "-an", level: 1, example1: "European", example2: "American", meaning: "person/relating to", grammaticalFunction: "", type: "suffix" },
+          { no: 48, affix: "-ance", level: 3, example1: "performance", example2: "assistance", meaning: "", grammaticalFunction: "noun", type: "suffix" },
+          { no: 49, affix: "-ancy", level: 3, example1: "expectancy", example2: "consultancy", meaning: "", grammaticalFunction: "noun", type: "suffix" },
+          { no: 50, affix: "-ant", level: 2, example1: "resultant", example2: "pleasant", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 51, affix: "-ant", level: 1, example1: "consultant", example2: "servant", meaning: "person/thing", grammaticalFunction: "noun", type: "suffix" },
+          { no: 52, affix: "-ar", level: 3, example1: "circular", example2: "angular", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 53, affix: "-ary", level: 3, example1: "revolutionary", example2: "parliamentary", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 54, affix: "-ary", level: 1, example1: "secretary", example2: "commentary", meaning: "person/thing", grammaticalFunction: "noun", type: "suffix" },
+          { no: 55, affix: "-ate", level: 2, example1: "passionate", example2: "fortunate", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 56, affix: "-ate", level: 2, example1: "formulate", example2: "activate", meaning: "", grammaticalFunction: "verb", type: "suffix" },
+          { no: 57, affix: "-atic", level: 2, example1: "systematic", example2: "problematic", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 58, affix: "-ation", level: 2, example1: "consideration", example2: "presentation", meaning: "", grammaticalFunction: "noun", type: "suffix" },
+          { no: 59, affix: "-atory", level: 3, example1: "preparatory", example2: "exploratory", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 60, affix: "-cy", level: 3, example1: "bankruptcy", example2: "accuracy", meaning: "", grammaticalFunction: "noun", type: "suffix" },
+          { no: 61, affix: "-dom", level: 3, example1: "freedom", example2: "boredom", meaning: "a state of", grammaticalFunction: "", type: "suffix" },
+          { no: 62, affix: "-ee", level: 1, example1: "trainee", example2: "employee", meaning: "person", grammaticalFunction: "noun", type: "suffix" },
+          { no: 63, affix: "-eer", level: 2, example1: "mountaineer", example2: "engineer", meaning: "person", grammaticalFunction: "", type: "suffix" },
+          { no: 64, affix: "-en", level: 2, example1: "wooden", example2: "golden", meaning: "made of", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 65, affix: "-en", level: 3, example1: "tighten", example2: "weaken", meaning: "", grammaticalFunction: "verb", type: "suffix" },
+          { no: 66, affix: "-ence", level: 2, example1: "difference", example2: "existence", meaning: "", grammaticalFunction: "noun", type: "suffix" },
+          { no: 67, affix: "-ency", level: 3, example1: "tendency", example2: "dependency", meaning: "", grammaticalFunction: "noun", type: "suffix" },
+          { no: 68, affix: "-ent", level: 2, example1: "different", example2: "excellent", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 69, affix: "-ent", level: 1, example1: "president", example2: "respondent", meaning: "person/thing", grammaticalFunction: "noun", type: "suffix" },
+          { no: 70, affix: "-er", level: 1, example1: "manager", example2: "leader", meaning: "person/thing", grammaticalFunction: "noun", type: "suffix" },
+          { no: 71, affix: "-ery", level: 3, example1: "cookery", example2: "robbery", meaning: "", grammaticalFunction: "noun", type: "suffix" },
+          { no: 72, affix: "-ese", level: 1, example1: "Japanese", example2: "Vietnamese", meaning: "person/relating to", grammaticalFunction: "", type: "suffix" },
+          { no: 73, affix: "-esque", level: 3, example1: "picturesque", example2: "statuesque", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 74, affix: "-ess", level: 1, example1: "actress", example2: "princess", meaning: "female", grammaticalFunction: "", type: "suffix" },
+          { no: 75, affix: "-et", level: 3, example1: "packet", example2: "owlet", meaning: "small", grammaticalFunction: "", type: "suffix" },
+          { no: 76, affix: "-ette", level: 3, example1: "kitchenette", example2: "cigarette", meaning: "small", grammaticalFunction: "", type: "suffix" },
+          { no: 77, affix: "-fold", level: 3, example1: "twofold", example2: "threefold", meaning: "times", grammaticalFunction: "", type: "suffix" },
+          { no: 78, affix: "-ful", level: 1, example1: "successful", example2: "useful", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 79, affix: "-ful", level: 2, example1: "handful", example2: "mouthful", meaning: "amount", grammaticalFunction: "", type: "suffix" },
+          { no: 80, affix: "-hood", level: 2, example1: "childhood", example2: "motherhood", meaning: "a state of", grammaticalFunction: "", type: "suffix" },
+          { no: 81, affix: "-i", level: 3, example1: "Israeli", example2: "Iraqi", meaning: "person/relating to", grammaticalFunction: "", type: "suffix" },
+          { no: 82, affix: "-ian", level: 1, example1: "musician", example2: "Egyptian", meaning: "person/relating to", grammaticalFunction: "", type: "suffix" },
+          { no: 83, affix: "-ible", level: 2, example1: "accessible", example2: "convertible", meaning: "can be", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 84, affix: "-ic", level: 3, example1: "strategic", example2: "historic", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 85, affix: "-ify", level: 3, example1: "classify", example2: "simplify", meaning: "", grammaticalFunction: "verb", type: "suffix" },
+          { no: 86, affix: "-ion", level: 3, example1: "discussion", example2: "action", meaning: "", grammaticalFunction: "noun", type: "suffix" },
+          { no: 87, affix: "-ise", level: 3, example1: "specialise", example2: "generalise", meaning: "", grammaticalFunction: "verb", type: "suffix" },
+          { no: 88, affix: "-ish", level: 1, example1: "childish", example2: "selfish", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 89, affix: "-ism", level: 2, example1: "socialism", example2: "nationalism", meaning: "theory of", grammaticalFunction: "noun", type: "suffix" },
+          { no: 90, affix: "-ist", level: 1, example1: "specialist", example2: "artist", meaning: "person", grammaticalFunction: "noun", type: "suffix" },
+          { no: 91, affix: "-ite", level: 3, example1: "Israelite", example2: "socialite", meaning: "person", grammaticalFunction: "", type: "suffix" },
+          { no: 92, affix: "-ition", level: 2, example1: "addition", example2: "opposition", meaning: "", grammaticalFunction: "noun", type: "suffix" },
+          { no: 93, affix: "-ity", level: 3, example1: "majority", example2: "reality", meaning: "", grammaticalFunction: "noun", type: "suffix" },
+          { no: 94, affix: "-ive", level: 2, example1: "active", example2: "effective", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 95, affix: "-ize", level: 3, example1: "specialize", example2: "generalize", meaning: "", grammaticalFunction: "verb", type: "suffix" },
+          { no: 96, affix: "-less", level: 2, example1: "endless", example2: "useless", meaning: "without", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 97, affix: "-let", level: 3, example1: "booklet", example2: "droplet", meaning: "small", grammaticalFunction: "", type: "suffix" },
+          { no: 98, affix: "-ling", level: 3, example1: "weakling", example2: "underling", meaning: "connected with", grammaticalFunction: "", type: "suffix" },
+          { no: 99, affix: "-ly", level: 2, example1: "lively", example2: "friendly", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 100, affix: "-ly", level: 1, example1: "clearly", example2: "finally", meaning: "", grammaticalFunction: "adverb", type: "suffix" },
+          { no: 101, affix: "-ment", level: 1, example1: "development", example2: "management", meaning: "", grammaticalFunction: "noun", type: "suffix" },
+          { no: 102, affix: "-most", level: 2, example1: "topmost", example2: "uppermost", meaning: "the furthest", grammaticalFunction: "", type: "suffix" },
+          { no: 103, affix: "-ness", level: 1, example1: "awareness", example2: "illness", meaning: "", grammaticalFunction: "noun", type: "suffix" },
+          { no: 104, affix: "-or", level: 1, example1: "editor", example2: "governor", meaning: "person/thing", grammaticalFunction: "noun", type: "suffix" },
+          { no: 105, affix: "-ory", level: 3, example1: "sensory", example2: "contradictory", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 106, affix: "-ous", level: 2, example1: "dangerous", example2: "continuous", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 107, affix: "-ship", level: 3, example1: "leadership", example2: "friendship", meaning: "a state of", grammaticalFunction: "", type: "suffix" },
+          { no: 108, affix: "-some", level: 2, example1: "troublesome", example2: "fearsome", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 109, affix: "-ster", level: 3, example1: "youngster", example2: "gangster", meaning: "person", grammaticalFunction: "", type: "suffix" },
+          { no: 110, affix: "-th", level: 3, example1: "warmth", example2: "growth", meaning: "", grammaticalFunction: "noun", type: "suffix" },
+          { no: 111, affix: "-th", level: 2, example1: "fourth", example2: "sixth", meaning: "number", grammaticalFunction: "", type: "suffix" },
+          { no: 112, affix: "-ty", level: 2, example1: "safety", example2: "uncertainty", meaning: "", grammaticalFunction: "noun", type: "suffix" },
+          { no: 113, affix: "-ure", level: 3, example1: "pressure", example2: "failure", meaning: "", grammaticalFunction: "noun", type: "suffix" },
+          { no: 114, affix: "-ward", level: 2, example1: "upward", example2: "backward", meaning: "direction", grammaticalFunction: "", type: "suffix" },
+          { no: 115, affix: "-ways", level: 2, example1: "sideways", example2: "lengthways", meaning: "direction", grammaticalFunction: "", type: "suffix" },
+          { no: 116, affix: "-wise", level: 2, example1: "clockwise", example2: "stepwise", meaning: "direction", grammaticalFunction: "", type: "suffix" },
+          { no: 117, affix: "-y", level: 1, example1: "lucky", example2: "healthy", meaning: "", grammaticalFunction: "adjective", type: "suffix" },
+          { no: 118, affix: "-y", level: 2, example1: "difficulty", example2: "honesty", meaning: "", grammaticalFunction: "noun", type: "suffix" }
+        ];
+        
+        // Local storage functions
+        function saveProgress() {
+            localStorage.setItem('affixProgress', JSON.stringify(affixProgress));
+        }
+        
+        function loadProgress() {
+            const savedProgress = localStorage.getItem('affixProgress');
+            if (savedProgress) {
+                return JSON.parse(savedProgress);
+            }
+            
+            // Initialize progress data
+            const initialProgress = {};
+            affixData.forEach(affix => {
+                initialProgress[affix.no] = {
+                    mastered: false,
+                    attempts: 0,
+                    correct: 0
+                };
+            });
+            
+            return initialProgress;
+        }
+        
+        // Initialize progress data
+        let affixProgress = loadProgress();
+        
+        // Tab functionality
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Update active content
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `${tabId}-tab`) {
+                        content.classList.add('active');
+                    }
+                });
+                
+                // Initialize the tab content if needed
+                if (tabId === 'study') {
+                    populateAffixTable();
+                } else if (tabId === 'flashcard') {
+                    initFlashcards();
+                } else if (tabId === 'quiz') {
+                    // Quiz is initialized when the start button is clicked
+                } else if (tabId === 'progress') {
+                    updateProgressStats();
+                    updateProgressDisplay();
+                }
+            });
+        });
+        
+        // Study tab functionality
+        const affixTable = document.querySelector('#affix-table tbody');
+        const affixTypeFilter = document.querySelector('#affix-type');
+        const difficultyFilter = document.querySelector('#difficulty-level');
+        const searchInput = document.querySelector('#search-input');
+        
+        function populateAffixTable() {
+            // Clear existing rows
+            affixTable.innerHTML = '';
+            
+            // Apply filters
+            const typeFilter = affixTypeFilter.value;
+            const levelFilter = difficultyFilter.value;
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            // Filter data
+            const filteredData = affixData.filter(affix => {
+                // Type filter
+                if (typeFilter !== 'all' && affix.type !== typeFilter) {
+                    return false;
+                }
+                
+                // Level filter
+                if (levelFilter !== 'all' && affix.level !== parseInt(levelFilter)) {
+                    return false;
+                }
+                
+                // Search filter
+                if (searchTerm) {
+                    return (
+                        affix.affix.toLowerCase().includes(searchTerm) ||
+                        affix.example1.toLowerCase().includes(searchTerm) ||
+                        affix.example2.toLowerCase().includes(searchTerm) ||
+                        affix.meaning.toLowerCase().includes(searchTerm) ||
+                        affix.grammaticalFunction.toLowerCase().includes(searchTerm)
+                    );
+                }
+                
+                return true;
+            });
+            
+            // Create table rows
+            filteredData.forEach(affix => {
+                const row = document.createElement('tr');
+                row.classList.add(`level-${affix.level}`);
+                
+                const masteredStatus = affixProgress[affix.no].mastered;
+                
+                row.innerHTML = `
+                    <td>${affix.no}</td>
+                    <td><strong>${affix.affix}</strong></td>
+                    <td>Level ${affix.level}</td>
+                    <td>${affix.example1}</td>
+                    <td>${affix.example2}</td>
+                    <td>${affix.meaning}</td>
+                    <td>${affix.grammaticalFunction}</td>
+                    <td>
+                        <input type="checkbox" class="mastery-checkbox" data-affix-id="${affix.no}" 
+                            ${masteredStatus ? 'checked' : ''}>
+                        <div class="learning-progress">
+                            <div class="learning-bar" style="width: ${calculateProgressWidth(affix.no)}%"></div>
+                        </div>
+                    </td>
+                `;
+                
+                affixTable.appendChild(row);
+            });
+            
+            // Add event listeners to checkboxes
+            document.querySelectorAll('.mastery-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const affixId = parseInt(this.getAttribute('data-affix-id'));
+                    affixProgress[affixId].mastered = this.checked;
+                    saveProgress();
+                    
+                    // Update the progress bar
+                    const progressBar = this.nextElementSibling.querySelector('.learning-bar');
+                    progressBar.style.width = calculateProgressWidth(affixId) + '%';
+                });
+            });
+        }
+        
+        function calculateProgressWidth(affixId) {
+            const progress = affixProgress[affixId];
+            
+            if (progress.mastered) {
+                return 100;
+            }
+            
+            if (progress.attempts === 0) {
+                return 0;
+            }
+            
+            return Math.min(Math.floor((progress.correct / progress.attempts) * 100), 99);
+        }
+        
+        // Add event listeners for filters
+        affixTypeFilter.addEventListener('change', populateAffixTable);
+        difficultyFilter.addEventListener('change', populateAffixTable);
+        searchInput.addEventListener('input', populateAffixTable);
+        
+        // Flashcard functionality
+        const flashcardContainer = document.querySelector('.flashcard');
+        const flashcardTypeFilter = document.querySelector('#flashcard-type');
+        const flashcardLevelFilter = document.querySelector('#flashcard-level');
+        const flashcardMasteredFilter = document.querySelector('#flashcard-mastered');
+        const prevCardButton = document.querySelector('#prev-card');
+        const nextCardButton = document.querySelector('#next-card');
+        const markKnownButton = document.querySelector('#mark-known');
+        const resetFlashcardsButton = document.querySelector('#reset-flashcards');
+        
+        let currentFlashcards = [];
+        let currentCardIndex = 0;
+        
+        function initFlashcards() {
+            // Filter cards based on selections
+            filterFlashcards();
+            
+            if (currentFlashcards.length > 0) {
+                showFlashcard(0);
+            }
+        }
+        
+        function filterFlashcards() {
+            const typeFilter = flashcardTypeFilter.value;
+            const levelFilter = flashcardLevelFilter.value;
+            const masteredFilter = flashcardMasteredFilter.value;
+            
+            currentFlashcards = affixData.filter(affix => {
+                // Type filter
+                if (typeFilter !== 'all' && affix.type !== typeFilter) {
+                    return false;
+                }
+                
+                // Level filter
+                if (levelFilter !== 'all' && affix.level !== parseInt(levelFilter)) {
+                    return false;
+                }
+                
+                // Mastery filter
+                if (masteredFilter !== 'all') {
+                    const isMastered = affixProgress[affix.no].mastered;
+                    if (masteredFilter === 'true' && !isMastered) {
+                        return false;
+                    }
+                    if (masteredFilter === 'false' && isMastered) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            });
+            
+            // Reset current index
+            currentCardIndex = 0;
+            
+            // Update UI if no cards match filters
+            if (currentFlashcards.length === 0) {
+                flashcardContainer.querySelector('.flashcard-front').innerHTML = `
+                    <div class="flashcard-affix">フィルタに一致する接辞がありません</div>
+                    <p>別のフィルタ条件を試してください</p>
+                `;
+                flashcardContainer.querySelector('.flashcard-back').innerHTML = `
+                    <div class="flashcard-affix">No matching affixes</div>
+                    <p>Please try different filter criteria</p>
+                `;
+                
+                // Disable navigation buttons
+                prevCardButton.disabled = true;
+                nextCardButton.disabled = true;
+                markKnownButton.disabled = true;
+            } else {
+                // Enable navigation buttons
+                prevCardButton.disabled = false;
+                nextCardButton.disabled = false;
+                markKnownButton.disabled = false;
+            }
+        }
+        
+        function showFlashcard(index) {
+            if (currentFlashcards.length === 0) return;
+            
+            // Ensure index is in bounds
+            if (index < 0) index = currentFlashcards.length - 1;
+            if (index >= currentFlashcards.length) index = 0;
+            
+            currentCardIndex = index;
+            
+            const affix = currentFlashcards[index];
+            const progress = affixProgress[affix.no];
+            
+            // Update front of card
+            const frontElement = flashcardContainer.querySelector('.flashcard-front');
+            frontElement.innerHTML = `
+                <div class="flashcard-level">Level ${affix.level}</div>
+                <div class="flashcard-affix">${affix.affix}</div>
+                <p>カードをクリックして意味を確認</p>
+                <p class="hiragana">カードをクリックしていみをかくにん</p>
+                ${progress.mastered ? '<div class="mastered-icon">✓ 習得済み</div>' : ''}
+            `;
+            
+            // Update back of card
+            const backElement = flashcardContainer.querySelector('.flashcard-back');
+            backElement.innerHTML = `
+                <div class="flashcard-level">Level ${affix.level}</div>
+                <div class="flashcard-affix">${affix.affix}</div>
+                <div class="flashcard-example">例: ${affix.example1}, ${affix.example2}</div>
+                <div class="flashcard-meaning">意味: ${affix.meaning || affix.grammaticalFunction}</div>
+                <div class="flashcard-grammar">文法機能: ${affix.grammaticalFunction || '-'}</div>
+                ${progress.mastered ? '<div class="mastered-icon">✓ 習得済み</div>' : ''}
+            `;
+            
+            // Ensure card is showing front side
+            flashcardContainer.classList.remove('flipped');
+            
+            // Update button text based on mastery status
+            markKnownButton.textContent = progress.mastered ? '未習得に戻す' : '習得済みにする';
+            markKnownButton.className = progress.mastered ? 'btn-danger' : 'btn-success';
+        }
+        
+        // Flashcard event listeners
+        flashcardContainer.addEventListener('click', () => {
+            flashcardContainer.classList.toggle('flipped');
+        });
+        
+        prevCardButton.addEventListener('click', () => {
+            showFlashcard(currentCardIndex - 1);
+        });
+        
+        nextCardButton.addEventListener('click', () => {
+            showFlashcard(currentCardIndex + 1);
+        });
+        
+        markKnownButton.addEventListener('click', () => {
+            if (currentFlashcards.length === 0) return;
+            
+            const currentAffix = currentFlashcards[currentCardIndex];
+            const affixId = currentAffix.no;
+            
+            // Toggle mastery status
+            affixProgress[affixId].mastered = !affixProgress[affixId].mastered;
+            saveProgress();
+            
+            // Update card
+            showFlashcard(currentCardIndex);
+        });
+        
+        resetFlashcardsButton.addEventListener('click', () => {
+            if (confirm('本当にすべての習得状況をリセットしますか？')) {
+                Object.keys(affixProgress).forEach(key => {
+                    affixProgress[key].mastered = false;
+                });
+                saveProgress();
+                showFlashcard(currentCardIndex);
+            }
+        });
+        
+        // Filter change event listeners
+        flashcardTypeFilter.addEventListener('change', initFlashcards);
+        flashcardLevelFilter.addEventListener('change', initFlashcards);
+        flashcardMasteredFilter.addEventListener('change', initFlashcards);
+        
+        // Quiz functionality
+        const quizTypeSelect = document.querySelector('#quiz-type');
+        const quizAffixTypeSelect = document.querySelector('#quiz-affix-type');
+        const quizLevelSelect = document.querySelector('#quiz-level');
+        const startQuizButton = document.querySelector('#start-quiz');
+        const quizPrompt = document.querySelector('#quiz-prompt');
+        const quizOptions = document.querySelector('#quiz-options');
+        const nextQuestionButton = document.querySelector('#next-question');
+        const progressBar = document.querySelector('.progress-bar');
+        const quizCorrectElement = document.querySelector('#quiz-correct');
+        const quizIncorrectElement = document.querySelector('#quiz-incorrect');
+        const quizRemainingElement = document.querySelector('#quiz-remaining');
+        
+        let currentQuiz = [];
+        let currentQuestionIndex = 0;
+        let quizScore = { correct: 0, incorrect: 0 };
+        let selectedOption = null;
+        let correctOption = null;
+        
+        function prepareQuiz() {
+            // Filter affixes based on quiz settings
+            const typeFilter = quizAffixTypeSelect.value;
+            const levelFilter = quizLevelSelect.value;
+            
+            const filteredAffixes = affixData.filter(affix => {
+                // Type filter
+                if (typeFilter !== 'all' && affix.type !== typeFilter) {
+                    return false;
+                }
+                
+                // Level filter
+                if (levelFilter !== 'all' && affix.level !== parseInt(levelFilter)) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            // Shuffle and limit to 10 questions
+            currentQuiz = shuffleArray([...filteredAffixes]).slice(0, 10);
+            
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            quizScore = { correct: 0, incorrect: 0 };
+            
+            // Update UI
+            updateQuizProgress();
+            showQuizQuestion();
+        }
+        
+        function showQuizQuestion() {
+            if (currentQuestionIndex >= currentQuiz.length) {
+                showQuizResults();
+                return;
+            }
+            
+            const currentQuestion = currentQuiz[currentQuestionIndex];
+            const quizType = quizTypeSelect.value;
+            
+            // Reset question state
+            selectedOption = null;
+            correctOption = null;
+            nextQuestionButton.disabled = true;
+            
+            // Clear existing options
+            quizOptions.innerHTML = '';
+            
+            // Generate question based on quiz type
+            if (quizType === 'meaning') {
+                // Affix → Meaning
+                quizPrompt.textContent = `接辞「${currentQuestion.affix}」の意味は？`;
+                
+                // Correct answer
+                const correctMeaning = currentQuestion.meaning || currentQuestion.grammaticalFunction;
+                
+                // Generate 3 incorrect options
+                const incorrectOptions = getRandomIncorrectOptions(
+                    currentQuestion, 
+                    'meaning', 
+                    3
+                );
+                
+                // Combine options and shuffle
+                const options = shuffleArray([correctMeaning, ...incorrectOptions]);
+                
+                // Record correct option index
+                correctOption = options.indexOf(correctMeaning);
+                
+                // Create option elements
+                options.forEach((option, index) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'quiz-option';
+                    optionElement.textContent = option;
+                    optionElement.dataset.index = index;
+                    quizOptions.appendChild(optionElement);
+                });
+                
+            } else if (quizType === 'affix') {
+                // Meaning → Affix
+                const meaningText = currentQuestion.meaning || currentQuestion.grammaticalFunction;
+                quizPrompt.textContent = `「${meaningText}」を意味する接辞は？`;
+                
+                // Correct answer
+                const correctAffix = currentQuestion.affix;
+                
+                // Generate 3 incorrect options
+                const incorrectOptions = getRandomIncorrectOptions(
+                    currentQuestion, 
+                    'affix', 
+                    3
+                );
+                
+                // Combine options and shuffle
+                const options = shuffleArray([correctAffix, ...incorrectOptions]);
+                
+                // Record correct option index
+                correctOption = options.indexOf(correctAffix);
+                
+                // Create option elements
+                options.forEach((option, index) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'quiz-option';
+                    optionElement.textContent = option;
+                    optionElement.dataset.index = index;
+                    quizOptions.appendChild(optionElement);
+                });
+                
+            } else if (quizType === 'example') {
+                // Example → Affix
+                const example = Math.random() < 0.5 ? currentQuestion.example1 : currentQuestion.example2;
+                quizPrompt.textContent = `単語「${example}」に含まれる接辞は？`;
+                
+                // Correct answer
+                const correctAffix = currentQuestion.affix;
+                
+                // Generate 3 incorrect options
+                const incorrectOptions = getRandomIncorrectOptions(
+                    currentQuestion, 
+                    'affix', 
+                    3
+                );
+                
+                // Combine options and shuffle
+                const options = shuffleArray([correctAffix, ...incorrectOptions]);
+                
+                // Record correct option index
+                correctOption = options.indexOf(correctAffix);
+                
+                // Create option elements
+                options.forEach((option, index) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'quiz-option';
+                    optionElement.textContent = option;
+                    optionElement.dataset.index = index;
+                    quizOptions.appendChild(optionElement);
+                });
+            }
+            
+            // Add click event listeners to options
+            document.querySelectorAll('.quiz-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    if (selectedOption !== null) return; // Already answered
+                    
+                    const optionIndex = parseInt(this.dataset.index);
+                    selectedOption = optionIndex;
+                    
+                    // Mark the selected option
+                    document.querySelectorAll('.quiz-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    
+                    // Check answer
+                    checkAnswer();
+                    
+                    // Enable next button
+                    nextQuestionButton.disabled = false;
+                });
+            });
+        }
+        
+        function checkAnswer() {
+            const options = document.querySelectorAll('.quiz-option');
+            
+            // Mark correct and incorrect options
+            options.forEach((option, index) => {
+                if (index === correctOption) {
+                    option.classList.add('correct');
+                } else if (index === selectedOption) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // Update score
+            if (selectedOption === correctOption) {
+                quizScore.correct += 1;
+                
+                // Update affix progress
+                const currentAffix = currentQuiz[currentQuestionIndex];
+                affixProgress[currentAffix.no].attempts += 1;
+                affixProgress[currentAffix.no].correct += 1;
+                
+                // Automatically mark as mastered if answered correctly 3 times
+                if (affixProgress[currentAffix.no].correct >= 3 && !affixProgress[currentAffix.no].mastered) {
+                    affixProgress[currentAffix.no].mastered = true;
+                }
+            } else {
+                quizScore.incorrect += 1;
+                
+                // Update affix progress
+                const currentAffix = currentQuiz[currentQuestionIndex];
+                affixProgress[currentAffix.no].attempts += 1;
+            }
+            
+            saveProgress();
+            updateQuizProgress();
+        }
+        
+        function nextQuestion() {
+            currentQuestionIndex += 1;
+            
+            if (currentQuestionIndex < currentQuiz.length) {
+                showQuizQuestion();
+            } else {
+                showQuizResults();
+            }
+        }
+        
+        function showQuizResults() {
+            quizPrompt.textContent = `クイズ完了！ スコア: ${quizScore.correct} / ${currentQuiz.length}`;
+            quizOptions.innerHTML = '';
+            nextQuestionButton.textContent = '新しいクイズを開始';
+            nextQuestionButton.disabled = false;
+            
+            nextQuestionButton.onclick = function() {
+                nextQuestionButton.textContent = '次の質問';
+                nextQuestionButton.onclick = function() {
+                    nextQuestion();
+                };
+                startQuizButton.click();
+            };
+        }
+        
+        function updateQuizProgress() {
+            // Update progress bar
+            const progressPercent = currentQuiz.length > 0 
+                ? (currentQuestionIndex / currentQuiz.length) * 100 
+                : 0;
+            progressBar.style.width = `${progressPercent}%`;
+            
+            // Update stats
+            quizCorrectElement.textContent = quizScore.correct;
+            quizIncorrectElement.textContent = quizScore.incorrect;
+            quizRemainingElement.textContent = currentQuiz.length - currentQuestionIndex;
+        }
+        
+        function getRandomIncorrectOptions(currentItem, type, count) {
+            const options = [];
+            const usedIndices = new Set([currentItem.no - 1]); // Exclude current item
+            
+            while (options.length < count) {
+                const randomIndex = Math.floor(Math.random() * affixData.length);
+                
+                if (!usedIndices.has(randomIndex)) {
+                    usedIndices.add(randomIndex);
+                    
+                    if (type === 'meaning') {
+                        options.push(affixData[randomIndex].meaning || affixData[randomIndex].grammaticalFunction);
+                    } else if (type === 'affix') {
+                        options.push(affixData[randomIndex].affix);
+                    }
+                }
+            }
+            
+            return options;
+        }
+        
+        // Quiz event listeners
+        startQuizButton.addEventListener('click', prepareQuiz);
+        nextQuestionButton.addEventListener('click', nextQuestion);
+        
+        // Progress tab functionality
+        const progressLevelFilter = document.querySelector('#progress-level');
+        const progressTypeFilter = document.querySelector('#progress-type');
+        const progressMasteredFilter = document.querySelector('#progress-mastered');
+        const resetProgressButton = document.querySelector('#reset-progress');
+        const affixProgressContainer = document.querySelector('#affix-progress');
+        
+        function updateProgressStats() {
+            let totalMastered = 0;
+            let prefixMastered = 0;
+            let suffixMastered = 0;
+            
+            Object.keys(affixProgress).forEach(key => {
+                const affixId = parseInt(key);
+                const affix = affixData.find(a => a.no === affixId);
+                
+                if (affixProgress[key].mastered) {
+                    totalMastered++;
+                    
+                    if (affix.type === 'prefix') {
+                        prefixMastered++;
+                    } else if (affix.type === 'suffix') {
+                        suffixMastered++;
+                    }
+                }
+            });
+            
+            document.querySelector('#total-mastered').textContent = totalMastered;
+            document.querySelector('#prefix-mastered').textContent = `${prefixMastered}/42`;
+            document.querySelector('#suffix-mastered').textContent = `${suffixMastered}/76`;
+        }
+        
+        function updateProgressDisplay() {
+            // Clear container
+            affixProgressContainer.innerHTML = '';
+            
+            // Apply filters
+            const levelFilter = progressLevelFilter.value;
+            const typeFilter = progressTypeFilter.value;
+            const masteredFilter = progressMasteredFilter.value;
+            
+            // Filter data
+            const filteredData = affixData.filter(affix => {
+                // Level filter
+                if (levelFilter !== 'all' && affix.level !== parseInt(levelFilter)) {
+                    return false;
+                }
+                
+                // Type filter
+                if (typeFilter !== 'all' && affix.type !== typeFilter) {
+                    return false;
+                }
+                
+                // Mastery filter
+                if (masteredFilter !== 'all') {
+                    const isMastered = affixProgress[affix.no].mastered;
+                    if (masteredFilter === 'true' && !isMastered) {
+                        return false;
+                    }
+                    if (masteredFilter === 'false' && isMastered) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            });
+            
+            // Create progress cards
+            filteredData.forEach(affix => {
+                const affixCard = document.createElement('div');
+                affixCard.className = `affix-card level-${affix.level}`;
+                
+                const progress = affixProgress[affix.no];
+                const progressWidth = calculateProgressWidth(affix.no);
+                
+                affixCard.innerHTML = `
+                    <strong>${affix.affix}</strong>
+                    <span class="affix-type">${affix.type === 'prefix' ? '接頭辞' : '接尾辞'}</span>
+                    <div>Level ${affix.level}</div>
+                    <div class="learning-progress">
+                        <div class="learning-bar" style="width: ${progressWidth}%"></div>
+                    </div>
+                    <div class="mastery-control">
+                        <input type="checkbox" class="mastery-checkbox" data-affix-id="${affix.no}" 
+                            ${progress.mastered ? 'checked' : ''}>
+                        <label>${progress.mastered ? '習得済み' : '未習得'}</label>
+                    </div>
+                    <div class="progress-stats">
+                        試行回数: ${progress.attempts}, 正解回数: ${progress.correct}
+                    </div>
+                `;
+                
+                affixProgressContainer.appendChild(affixCard);
+            });
+            
+            // Add event listeners to checkboxes
+            document.querySelectorAll('#affix-progress .mastery-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const affixId = parseInt(this.getAttribute('data-affix-id'));
+                    affixProgress[affixId].mastered = this.checked;
+                    saveProgress();
+                    
+                    // Update the label
+                    this.nextElementSibling.textContent = this.checked ? '習得済み' : '未習得';
+                    
+                    // Update the progress bar
+                    const card = this.closest('.affix-card');
+                    const progressBar = card.querySelector('.learning-bar');
+                    progressBar.style.width = calculateProgressWidth(affixId) + '%';
+                    
+                    // Update overall stats
+                    updateProgressStats();
+                });
+            });
+        }
+        
+        // Progress filter event listeners
+        progressLevelFilter.addEventListener('change', updateProgressDisplay);
+        progressTypeFilter.addEventListener('change', updateProgressDisplay);
+        progressMasteredFilter.addEventListener('change', updateProgressDisplay);
+        
+        resetProgressButton.addEventListener('click', function() {
+            if (confirm('本当にすべての進捗をリセットしますか？学習記録はすべて失われます。')) {
+                Object.keys(affixProgress).forEach(key => {
+                    affixProgress[key] = {
+                        mastered: false,
+                        attempts: 0,
+                        correct: 0
+                    };
+                });
+                saveProgress();
+                updateProgressStats();
+                updateProgressDisplay();
+            }
+        });
+        
+        // Utility functions
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        // Initialize the app
+        populateAffixTable();
+    </script>
+</body>
+</html>
